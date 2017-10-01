@@ -1,0 +1,18 @@
+//
+// Created by hamburger on 9/30/17.
+//
+
+#include <stdbool.h>
+#ifndef RTEA_DEFINITIONS_H
+#include "definitions.h"
+#endif
+
+#ifndef RTEA_UTIL_H
+#define RTEA_UTIL_H
+
+#endif //RTEA_UTIL_H
+
+bool fileExists(char* filename);
+bool getBit(char byte, int position);
+void printHeader(FrameHeader fr);
+char *getArgs(int argc, char *argv[]);
