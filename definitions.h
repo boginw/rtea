@@ -9,18 +9,6 @@
 
 #endif //RTEA_DEFINITIONS_H
 
-typedef struct ID3Version{
-    int major;
-    int minor;
-} ID3Version;
-
-typedef enum ID3_Flags{
-    UNSYNC = 0x80,
-    EXTHEA = 0x40,
-    EXPERH = 0x20,
-    FOOTPR = 0x10
-} ID3_Flags;
-
 typedef enum Layer{
     layer1 = 3,
     layer2 = 2,
@@ -38,12 +26,6 @@ typedef enum ChannelMode{
     DUAL    = 2,
     SINGLE  = 3
 } ChannelMode;
-
-typedef struct ID3{
-    ID3Version version;
-    ID3_Flags flags;
-    unsigned int size;
-} ID3;
 
 typedef struct FrameHeader {
     MPEGVersion version;

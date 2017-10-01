@@ -44,7 +44,11 @@ char *getArgs(int argc, char *argv[]){
     return filename;
 }
 
-
+/**
+ * Checks if a given file exists
+ * @param filename File path
+ * @return Whether or not the file exists
+ */
 bool fileExists(char* filename){
     return access(filename, F_OK) != -1;
 }
@@ -54,35 +58,36 @@ bool getBit(char byte, int position){
     return (bool) ((byte >> position) & 1);
 }
 
+// TODO: move this
 void printHeader(FrameHeader fr){
     printf(
-            "\nFrame:\nMPEG Version: MPEG-%d\n"
-            "CRC Protection: %s\n"
-            "Bitrate: %d kbits/s\n"
-            "Frequeny: %d Hz\n"
-            "Private Bit: %d\n"
-            "Padding: %d\n"
-            "Channel Mode: %d\n",
-            !fr.version + 1,
-            fr.protection ? "Yes" : "No",
-            fr.bitrate,
-            fr.frequeny,
-            fr.private,
-            fr.padding,
-            fr.mode
+        "\nFrame:\nMPEG Version: MPEG-%d\n"
+        "CRC Protection: %s\n"
+        "Bitrate: %d kbits/s\n"
+        "Frequeny: %d Hz\n"
+        "Private Bit: %d\n"
+        "Padding: %d\n"
+        "Channel Mode: %d\n",
+        !fr.version + 1,
+        fr.protection ? "Yes" : "No",
+        fr.bitrate,
+        fr.frequeny,
+        fr.private,
+        fr.padding,
+        fr.mode
     );
     if(fr.mode == 1){
         printf(
-                "Intensity stereo: %d\n"
-                "MS Stereo: %d\n",
-                fr.intensityStereo,
-                fr.MSStereo
+            "Intensity stereo: %d\n"
+            "MS Stereo: %d\n",
+            fr.intensityStereo,
+            fr.MSStereo
         );
     }
     printf(
-            "Home bit: %s\n"
-                    "Emphasis: %d\n",
-            fr.home ? "Yes" : "No",
-            fr.emphasis
+        "Home bit: %s\n"
+                "Emphasis: %d\n",
+        fr.home ? "Yes" : "No",
+        fr.emphasis
     );
 }

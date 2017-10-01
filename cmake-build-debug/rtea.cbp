@@ -84,6 +84,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/hamburger/CLionProjects/rtea/ID3.c">
+			<Option target="rtea"/>
+		</Unit>
+		<Unit filename="/home/hamburger/CLionProjects/rtea/ID3.h">
+			<Option target="rtea"/>
+		</Unit>
 		<Unit filename="/home/hamburger/CLionProjects/rtea/definitions.c">
 			<Option target="rtea"/>
 		</Unit>
