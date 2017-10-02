@@ -5,10 +5,9 @@
 #include "util.h"
 #include <stdio.h>
 #include <unistd.h>
-#include <stdbool.h>
-#include <stdlib.h>
 
 int debug;
+
 
 char *getArgs(int argc, char *argv[]){
     int c, fflag = 0;
@@ -63,6 +62,7 @@ void printHeader(FrameHeader fr){
     printf(
         "\nFrame:\nMPEG Version: MPEG-%d\n"
         "CRC Protection: %s\n"
+        "Copyright: %s\n"
         "Bitrate: %d kbits/s\n"
         "Frequeny: %d Hz\n"
         "Private Bit: %d\n"
@@ -70,6 +70,7 @@ void printHeader(FrameHeader fr){
         "Channel Mode: %d\n",
         !fr.version + 1,
         fr.protection ? "Yes" : "No",
+        fr.copyright ? "Yes" : "No",
         fr.bitrate,
         fr.frequeny,
         fr.private,

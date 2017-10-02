@@ -41,11 +41,21 @@ typedef struct FrameHeader {
     bool copyright;
     bool home;
     int emphasis;
+	int crc;
 } FrameHeader;
+
+typedef struct FrameSideInfo{
+	int main_data_begin;
+	char private;
+	int scfsi;
+} FrameSideInfo;
 
 typedef struct Frame{
     FrameHeader header;
-};
+	FrameSideInfo sideInfo;
+	// FrameBody body;
+	// bool (*isMono)(const struct Frame);
+} Frame;
 
 const static int BitrateTable[2][4][16] = {
         // MPEG-2
@@ -74,6 +84,13 @@ const static int BitrateTable[2][4][16] = {
 const static int FrequencyTable[2][4] = {
         { 22050, 24000, 16000 },
         { 44100, 48000, 32000 }
+};
+
+const static int ScaleFactorGroupTable[4][5] = {
+	{  1, 2, 3, 4, 5 },
+	{  6, 7, 8, 9,10 },
+	{ 11,12,13,14,15 },
+	{ 16,17,18,19,20 }
 };
 
 extern int debug;

@@ -24,7 +24,7 @@ ID3 parseID3(FILE *fp){
     // Size of the ID3 frame
     ret.size = *(unsigned int*) (&buffer[6]);
 
-    fseek(fp, ftell(fp) + ret.size, SEEK_SET);
+    fseek(fp, (long) (ftell(fp) + ret.size), SEEK_SET);
     return ret;
 }
 
