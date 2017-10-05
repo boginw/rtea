@@ -3,6 +3,8 @@
 //
 
 #include <stdbool.h>
+#include <limits.h>
+
 #ifndef RTEA_DEFINITIONS_H
 #include "definitions.h"
 #endif
@@ -16,3 +18,4 @@ bool fileExists(char* filename);
 bool getBit(char byte, int position);
 void printHeader(FrameHeader fr);
 char *getArgs(int argc, char *argv[]);
+unsigned int nextBits(const unsigned char *buffer, size_t *start, int amount);

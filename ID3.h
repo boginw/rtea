@@ -29,4 +29,4 @@ typedef struct ID3{
 } ID3;
 
 bool isID3(FILE *fp);
-ID3 parseID3(FILE *fp);
+ID3 parseID3Header(FILE *fp);

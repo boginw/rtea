@@ -5,6 +5,8 @@
 #include "util.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <math.h>
 
 int debug;
 
@@ -55,6 +57,33 @@ bool fileExists(char* filename){
 
 bool getBit(char byte, int position){
     return (bool) ((byte >> position) & 1);
+}
+
+/**
+ * Receives a list of bytes and returns a select few
+ * @param buffer Char array
+ * @param start Which bit to start with
+ * @param end Which bit to end with
+ * @return An integer with selected bytes
+ */
+unsigned int nextBits(const unsigned char *buffer, size_t* start, int amount){
+	int cByte = (int) (*start / 8),
+			cBit = (int) (*start % 8);
+	size_t totalBits = (size_t) amount;
+	unsigned int result = 0;
+
+	for (int i = 0; i < totalBits; i++, cBit++) {
+		result |= getBit(buffer[cByte], 7 - cBit);
+		result <<= 1;
+
+		if(cBit > 7){
+			cBit = 0;
+			cByte++;
+		}
+	}
+	*start += amount;
+
+	return result >> 1;
 }
 
 // TODO: move this

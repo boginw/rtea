@@ -44,10 +44,29 @@ typedef struct FrameHeader {
 	int crc;
 } FrameHeader;
 
+typedef struct Granule{
+	unsigned int par2_3_length[2];
+	unsigned int bigValues[2];
+	unsigned int globalGain[2];
+	unsigned char scalefacCompress[2];
+	unsigned char windowSwitchingFlag[2];
+	unsigned char blockType[2];
+	unsigned int tableSelect[2][3];
+	unsigned char mixedBlockflag[2];
+	unsigned int subblockGain[2][3];
+	unsigned char region0Count[2];
+	unsigned char region1Count[2];
+	unsigned char preflag[2];
+	unsigned char scalefacScale[2];
+	unsigned char count1TableSelect[2];
+} Granule;
+
 typedef struct FrameSideInfo{
 	int main_data_begin;
 	char private;
 	int scfsi;
+	Granule granule0;
+	Granule granule1;
 } FrameSideInfo;
 
 typedef struct Frame{

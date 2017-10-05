@@ -5,7 +5,12 @@
 #include "ID3.h"
 #include <string.h>
 
-ID3 parseID3(FILE *fp){
+/**
+ * Parse ID3 header and skip its body
+ * @param fp
+ * @return ID3 header
+ */
+ID3 parseID3Header(FILE *fp){
     ID3 ret;
     unsigned char buffer[10];
 
