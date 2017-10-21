@@ -3,11 +3,23 @@
 //
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifndef RTEA_DEFINITIONS_H
 #define RTEA_DEFINITIONS_H
 
 #endif //RTEA_DEFINITIONS_H
+
+typedef struct { /* Scale factor band indices,for long and short windows */
+	unsigned l[23];
+	unsigned s[14];
+} t_sf_band_indices;
+
+typedef struct hufftables{
+	const unsigned short * hufftable;
+	uint16_t treelen;
+	uint8_t linbits;
+} hufftables;
 
 typedef enum Layer{
     layer1 = 3,
@@ -32,7 +44,7 @@ typedef struct FrameHeader {
     bool protection;
     Layer layer;
     int bitrate;
-    int frequeny;
+    int frequency;
     bool private;
     bool padding;
     ChannelMode mode;
@@ -45,10 +57,11 @@ typedef struct FrameHeader {
 } FrameHeader;
 
 typedef struct Granule{
-	unsigned int par2_3_length[2];
+	unsigned int part2_3_length[2];
 	unsigned int bigValues[2];
 	unsigned int globalGain[2];
 	unsigned char scalefacCompress[2];
+	unsigned int slen[2][2];
 	unsigned char windowSwitchingFlag[2];
 	unsigned char blockType[2];
 	unsigned int tableSelect[2][3];
@@ -59,57 +72,29 @@ typedef struct Granule{
 	unsigned char preflag[2];
 	unsigned char scalefacScale[2];
 	unsigned char count1TableSelect[2];
+	unsigned int part2Length[2];
+	unsigned int count1[2];
 } Granule;
 
 typedef struct FrameSideInfo{
-	int main_data_begin;
-	char private;
-	int scfsi;
-	Granule granule0;
-	Granule granule1;
+	unsigned int main_data_begin;
+	unsigned char private;
+	bool scfsi[2][4];
+	Granule granule[2];
 } FrameSideInfo;
 
+typedef struct{
+	size_t length;
+	unsigned int scalefac_l[2][2][21];    /* 0-4 bits */
+	unsigned int scalefac_s[2][2][12][3]; /* 0-4 bits */
+	float is[2][2][576]; // Huffman coded freq. lines
+} FrameMainData;
+
 typedef struct Frame{
+	long start;
     FrameHeader header;
 	FrameSideInfo sideInfo;
-	// FrameBody body;
-	// bool (*isMono)(const struct Frame);
+	FrameMainData mainData;
 } Frame;
-
-const static int BitrateTable[2][4][16] = {
-        // MPEG-2
-        {
-                // Layer 0
-                { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-                // Layer 3
-                { -1, 8, 16, 24, 32, 64, 80, 56, 64, 128, 160, 112, 128, 256, 320, -1 },
-                // Layer 2
-                { -1, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, -1 },
-                // Layer 1
-                { -1, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, -1 }
-        },
-        // MPEG-1
-        {
-                // Layer 0
-                { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-                // Layer 3
-                { -1, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 },
-                // Layer 2
-                { -1, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, -1 },
-                // Layer 1
-                { -1, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, -1 }
-        }
-};
-const static int FrequencyTable[2][4] = {
-        { 22050, 24000, 16000 },
-        { 44100, 48000, 32000 }
-};
-
-const static int ScaleFactorGroupTable[4][5] = {
-	{  1, 2, 3, 4, 5 },
-	{  6, 7, 8, 9,10 },
-	{ 11,12,13,14,15 },
-	{ 16,17,18,19,20 }
-};
 
 extern int debug;

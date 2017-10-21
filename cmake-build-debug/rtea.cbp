@@ -86,13 +86,19 @@
 		<Unit filename="C:/Users/hamburger/Documents/rtea/ID3.h">
 			<Option target="rtea"/>
 		</Unit>
-		<Unit filename="C:/Users/hamburger/Documents/rtea/definitions.c">
+		<Unit filename="C:/Users/hamburger/Documents/rtea/LinkedList.c">
+			<Option target="rtea"/>
+		</Unit>
+		<Unit filename="C:/Users/hamburger/Documents/rtea/LinkedList.h">
 			<Option target="rtea"/>
 		</Unit>
 		<Unit filename="C:/Users/hamburger/Documents/rtea/definitions.h">
 			<Option target="rtea"/>
 		</Unit>
 		<Unit filename="C:/Users/hamburger/Documents/rtea/main.c">
+			<Option target="rtea"/>
+		</Unit>
+		<Unit filename="C:/Users/hamburger/Documents/rtea/tables.h">
 			<Option target="rtea"/>
 		</Unit>
 		<Unit filename="C:/Users/hamburger/Documents/rtea/util.c">

@@ -3,10 +3,13 @@
 //
 
 #include "util.h"
+#ifndef RTEA_TABLES_H
+#include "tables.h"
+#endif //RTEA_TABLES_H
 #include <stdio.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
 int debug;
 
@@ -59,6 +62,10 @@ bool getBit(char byte, int position){
     return (bool) ((byte >> position) & 1);
 }
 
+char setBit(char byte, int pos, bool set){
+	return byte ^ (set << (int)pow(7 - pos, 2));
+}
+
 /**
  * Receives a list of bytes and returns a select few
  * @param buffer Char array
@@ -86,6 +93,40 @@ unsigned int nextBits(const unsigned char *buffer, size_t* start, int amount){
 	return result >> 1;
 }
 
+size_t nextBytes(const unsigned char *buffer, size_t* start, int amount, char* out){
+	int cByte = (int) (*start / 8),
+			cBit = (int) (*start % 8),
+			tByte = 0,
+			tBit = 0;
+	size_t totalBits = (size_t) amount;
+	unsigned int result = 0;
+	size_t size = (size_t) ceilf((float)totalBits / 8);
+	out = calloc(size, sizeof(char));
+
+	for (int i = 0; i < totalBits; i++, cBit++, tBit++) {
+		result |= getBit(buffer[cByte], 7 - cBit);
+
+		if(result){
+			out[tByte] = setBit(out[tByte], tBit, (bool) result);
+		}
+
+		if(tBit > 7){
+			tBit = 0;
+			tByte++;
+		}
+
+		if(cBit > 7){
+			cBit = 0;
+			cByte++;
+		}
+	}
+
+	*start += amount;
+	return size;
+}
+
+
+
 // TODO: move this
 void printHeader(FrameHeader fr){
     printf(
@@ -101,7 +142,7 @@ void printHeader(FrameHeader fr){
         fr.protection ? "Yes" : "No",
         fr.copyright ? "Yes" : "No",
         fr.bitrate,
-        fr.frequeny,
+		FrequencyTable[fr.version][fr.frequency],
         fr.private,
         fr.padding,
         fr.mode

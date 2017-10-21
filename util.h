@@ -16,6 +16,7 @@
 
 bool fileExists(char* filename);
 bool getBit(char byte, int position);
+char setBit(char byte, int pos, bool set);
 void printHeader(FrameHeader fr);
 char *getArgs(int argc, char *argv[]);
 unsigned int nextBits(const unsigned char *buffer, size_t *start, int amount);
