@@ -25,44 +25,46 @@ void readHuffman(unsigned char *buffer, size_t *cBit, Frame *fr, int gr, int ch)
 int huffmanDecode(unsigned char *buffer, size_t *cBit, Frame *fr, unsigned int tableNum,
 				  int32_t *x, int32_t *y, int32_t *v, int32_t *w);
 
+void requantize(Frame *fr, int gr, int ch);
+
 int debug;
 
 // TODO: move this
 hufftables g_huffman_main[34] = {
-		{NULL               ,  0, 0 },  /* Table  0 */
-		{g_huffman_table_1 ,  7, 0 },  /* Table  1 */
-		{g_huffman_table_2 , 17, 0 },  /* Table  2 */
-		{g_huffman_table_3 , 17, 0 },  /* Table  3 */
-		{NULL               ,  0, 0 },  /* Table  4 */
-		{g_huffman_table_5 , 31, 0 },  /* Table  5 */
-		{g_huffman_table_6 , 31, 0 },  /* Table  6 */
-		{g_huffman_table_7 , 71, 0 },  /* Table  7 */
-		{g_huffman_table_8 , 71, 0 },  /* Table  8 */
-		{g_huffman_table_9 , 71, 0 },  /* Table  9 */
-		{g_huffman_table_10 ,127, 0 },  /* Table 10 */
-		{g_huffman_table_11 ,127, 0 },  /* Table 11 */
-		{g_huffman_table_12 ,127, 0 },  /* Table 12 */
-		{g_huffman_table_13 ,511, 0 },  /* Table 13 */
-		{NULL               ,  0, 0 },  /* Table 14 */
-		{g_huffman_table_15 ,511, 0 },  /* Table 15 */
-		{g_huffman_table_16 ,511, 1 },  /* Table 16 */
-		{g_huffman_table_16 ,511, 2 },  /* Table 17 */
-		{g_huffman_table_16 ,511, 3 },  /* Table 18 */
-		{g_huffman_table_16 ,511, 4 },  /* Table 19 */
-		{g_huffman_table_16 ,511, 6 },  /* Table 20 */
-		{g_huffman_table_16 ,511, 8 },  /* Table 21 */
-		{g_huffman_table_16 ,511,10 },  /* Table 22 */
-		{g_huffman_table_16 ,511,13 },  /* Table 23 */
-		{g_huffman_table_24 ,512, 4 },  /* Table 24 */
-		{g_huffman_table_24 ,512, 5 },  /* Table 25 */
-		{g_huffman_table_24 ,512, 6 },  /* Table 26 */
-		{g_huffman_table_24 ,512, 7 },  /* Table 27 */
-		{g_huffman_table_24 ,512, 8 },  /* Table 28 */
-		{g_huffman_table_24 ,512, 9 },  /* Table 29 */
-		{g_huffman_table_24 ,512,11 },  /* Table 30 */
-		{g_huffman_table_24 ,512,13 },  /* Table 31 */
-		{g_huffman_table_32 , 31, 0 },  /* Table 32 (not seen in the standard) */
-		{g_huffman_table_33 , 31, 0 },  /* Table 33 (not seen in the standard) */
+		{ NULL,                 0,  0 },  /* Table  0 */
+		{ g_huffman_table_1,    7,  0 },  /* Table  1 */
+		{ g_huffman_table_2,   17,  0 },  /* Table  2 */
+		{ g_huffman_table_3,   17,  0 },  /* Table  3 */
+		{ NULL,                 0,  0 },  /* Table  4 */
+		{ g_huffman_table_5,   31,  0 },  /* Table  5 */
+		{ g_huffman_table_6,   31,  0 },  /* Table  6 */
+		{ g_huffman_table_7,   71,  0 },  /* Table  7 */
+		{ g_huffman_table_8,   71,  0 },  /* Table  8 */
+		{ g_huffman_table_9,   71,  0 },  /* Table  9 */
+		{ g_huffman_table_10, 127,  0 },  /* Table 10 */
+		{ g_huffman_table_11, 127,  0 },  /* Table 11 */
+		{ g_huffman_table_12, 127,  0 },  /* Table 12 */
+		{ g_huffman_table_13, 511,  0 },  /* Table 13 */
+		{ NULL,                 0,  0 },  /* Table 14 */
+		{ g_huffman_table_15, 511,  0 },  /* Table 15 */
+		{ g_huffman_table_16, 511,  1 },  /* Table 16 */
+		{ g_huffman_table_16, 511,  2 },  /* Table 17 */
+		{ g_huffman_table_16, 511,  3 },  /* Table 18 */
+		{ g_huffman_table_16, 511,  4 },  /* Table 19 */
+		{ g_huffman_table_16, 511,  6 },  /* Table 20 */
+		{ g_huffman_table_16, 511,  8 },  /* Table 21 */
+		{ g_huffman_table_16, 511, 10 },  /* Table 22 */
+		{ g_huffman_table_16, 511, 13 },  /* Table 23 */
+		{ g_huffman_table_24, 512,  4 },  /* Table 24 */
+		{ g_huffman_table_24, 512,  5 },  /* Table 25 */
+		{ g_huffman_table_24, 512,  6 },  /* Table 26 */
+		{ g_huffman_table_24, 512,  7 },  /* Table 27 */
+		{ g_huffman_table_24, 512,  8 },  /* Table 28 */
+		{ g_huffman_table_24, 512,  9 },  /* Table 29 */
+		{ g_huffman_table_24, 512, 11 },  /* Table 30 */
+		{ g_huffman_table_24, 512, 13 },  /* Table 31 */
+		{ g_huffman_table_32,  31,  0 },  /* Table 32 (not seen in the standard) */
+		{ g_huffman_table_33,  31,  0 },  /* Table 33 (not seen in the standard) */
 };
 
 int main(int argc, char *argv[]) {
@@ -96,7 +98,7 @@ int main(int argc, char *argv[]) {
 
 	printf("%d frames found\n",frameList->count(frameList));
 
-	if(debug){
+	if(debug && frameList->count(frameList) > 0){
 		printHeader(frameList->get(frameList,0).header);
 	}
     fclose(fp);
@@ -107,21 +109,41 @@ int main(int argc, char *argv[]) {
 
 Frame nextFrame(FILE *fp, Frame *prev){
 	Frame fr;
-
+	int nch;
 	// store starting point in file for later
 	fr.start = ftell(fp);
 	fr.header = parseHeader(fp);
-
+	nch = fr.header.mode == SINGLE ? 1 : 2;
 	// Check if we support the header
 	checkSupported(fr);
 
 	fr.sideInfo = parseSideInfo(fp, fr.header);
 	parseMainData(fp, &fr);
 
+	for (int gr = 0; gr < 2; gr++) {
+		for (int ch = 0; ch < nch; ch++) {
+			requantize(&fr, gr, ch);
+		}
+	}
+
 	// Jump so we can read next frame
 	jumpToNextFrame(fp, &fr);
 
 	return fr;
+}
+
+void requantize(Frame *fr, int gr, int ch) {
+	// Scale factor band index and next scale factor band index
+	unsigned int sfb, nsfb;
+
+	// Sampling frequency index
+	int freq = fr->header.frequency;
+
+	// Check for short blocks
+	if(fr->sideInfo.granule[gr].windowSwitchingFlag[ch] &&
+			fr->sideInfo.granule[gr].blockType[ch] == 2){
+		
+	}
 }
 
 void parseMainData(FILE *fp, Frame *fr) {
@@ -212,7 +234,6 @@ void readHuffman(unsigned char* buffer, size_t *cBit, Frame *fr, int gr, int ch)
 	// Calculate bitPosEnd which is the index of the last bit for this part.
 	bitPosEnd = (unsigned int) ((*cBit) + g->part2_3_length[ch] - 1);
 	// Determine region boundaries
-
 	if((fr->sideInfo.granule[gr].windowSwitchingFlag[ch] == 1) &&
 			(fr->sideInfo.granule[gr].blockType[ch] == 2)){
 		region1Start = 36;  // sfb[9/3]*3=36
@@ -271,7 +292,6 @@ void readHuffman(unsigned char* buffer, size_t *cBit, Frame *fr, int gr, int ch)
 	}
 
 	fr->sideInfo.granule[gr].count1[ch] = isPos;
-
 	// Zero out the last part if necessary
 	for(/* is_pos comes from last for-loop */; isPos < 576; isPos++){
 		fr->mainData.is[gr][ch][isPos] = 0.0;
@@ -308,7 +328,7 @@ int huffmanDecode(unsigned char *buffer, size_t *cBit, Frame *fr, unsigned int t
 			}
 			point += htptr[point] >> 8;
 		}
-	} while((--bitsleft > 0) &&(point < treelen));
+	} while((--bitsleft > 0) && (point < treelen));
 	if(tableNum > 31) {  /* Process sign encodings for quadruples tables. */
 		*v =(*y >> 3) & 1;
 		*w =(*y >> 2) & 1;

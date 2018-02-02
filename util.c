@@ -131,6 +131,7 @@ size_t nextBytes(const unsigned char *buffer, size_t* start, int amount, char* o
 void printHeader(FrameHeader fr){
     printf(
         "\nFrame:\nMPEG Version: MPEG-%d\n"
+		"Layer: %d\n"
         "CRC Protection: %s\n"
         "Copyright: %s\n"
         "Bitrate: %d kbits/s\n"
@@ -139,6 +140,7 @@ void printHeader(FrameHeader fr){
         "Padding: %d\n"
         "Channel Mode: %d\n",
         !fr.version + 1,
+		fr.layer,
         fr.protection ? "Yes" : "No",
         fr.copyright ? "Yes" : "No",
         fr.bitrate,

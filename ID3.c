@@ -5,6 +5,7 @@
 #include "ID3.h"
 #include <string.h>
 
+// TODO: parse mp3 metadata and not just skip
 /**
  * Parse ID3 header and skip its body
  * @param fp
