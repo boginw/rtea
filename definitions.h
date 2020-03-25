@@ -10,7 +10,8 @@
 
 #endif //RTEA_DEFINITIONS_H
 
-typedef struct { /* Scale factor band indices,for long and short windows */
+/* Scale factor band indices, for long and short windows */
+typedef struct {
 	unsigned l[23];
 	unsigned s[14];
 } t_sf_band_indices;

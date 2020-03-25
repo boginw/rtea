@@ -68,27 +68,27 @@ hufftables g_huffman_main[34] = {
 int main(int argc, char *argv[]) {
   char *filename;
   long fileSize;
-  FILE *fp;
+  FILE *framePointer;
   Frame fr;
   Frame lr;
   filename = getArgs(argc, argv);
   LinkedList *frameList = linkedList();
 
   if (fileExists(filename)) {
-    fp = fopen(filename, "r");
-    fseek(fp, 0L, SEEK_END);
-    fileSize = ftell(fp);
-    rewind(fp);
+    framePointer = fopen(filename, "r");
+    fseek(framePointer, 0L, SEEK_END);
+    fileSize = ftell(framePointer);
+    rewind(framePointer);
   } else {
     fprintf(stderr, "File does not exist\n");
     exit(1);
   }
 
-  while (ftell(fp) < fileSize) {
-    if (isID3(fp)) {
-      parseID3Header(fp);
+  while (ftell(framePointer) < fileSize) {
+    if (isID3(framePointer)) {
+      parseID3Header(framePointer);
     } else {
-      fr = nextFrame(fp);
+      fr = nextFrame(framePointer);
       frameList->add(frameList, fr);
       lr = fr;
     }
@@ -99,9 +99,23 @@ int main(int argc, char *argv[]) {
   if (debug && frameList->count(frameList) > 0) {
     printHeader(frameList->get(frameList, 0).header);
   }
-  fclose(fp);
+  fclose(framePointer);
   freeList(frameList);
   return 0;
+}
+
+char* decodeLayer3(Frame frame) {
+
+  int granule, channel;
+  int channels = frame.header.mode == SINGLE ? 1 : 2;
+
+  for (granule = 0; granule < 2; granule++) {
+    for (channel = 0; channel < channels; ++channel) {
+      exit(1); // TODO: WIP
+    }
+  }
+
+  return malloc(2);
 }
 
 /**
@@ -144,8 +158,9 @@ void parseMainData(FILE *fp, Frame *fr) {
   fr->mainData.length = (size_t) totalSize;
 
   mdb = readMainDataBytes(
-      fp, fr->start, (size_t) (totalSize + fr->sideInfo.main_data_begin),
-      (size_t) fr->sideInfo.main_data_begin, skipSize);
+      fp, fr->start, (totalSize + fr->sideInfo.main_data_begin),
+      (size_t) fr->sideInfo.main_data_begin, skipSize
+  );
 
   // Foreach granule
   for (int gr = 0; gr < 2; gr++) {
@@ -278,7 +293,7 @@ void readHuffman(unsigned char *buffer, size_t *cBit, Frame *fr, int gr, int ch)
 
   // Zero out the last part if necessary
   for (/* is_pos comes from last for-loop */; isPos < 576; isPos++) {
-    fr->mainData.is[gr][ch][isPos] = 0.0;
+    fr->mainData.is[gr][ch][isPos] = 0.0f;
   }
 }
 
@@ -292,7 +307,7 @@ int huffmanDecode(unsigned char *buffer,
                   int32_t *v,
                   int32_t *w) {
   unsigned int point = 0, error = 1, bitsleft = 32, //=16??
-      treelen = g_huffman_main[tableNum].treelen,
+  treelen = g_huffman_main[tableNum].treelen,
       linbits = g_huffman_main[tableNum].linbits;
 
   if (treelen == 0) { /* Check for empty tables */

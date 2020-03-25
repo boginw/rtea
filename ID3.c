@@ -27,7 +27,7 @@ ID3 parseID3Header(FILE *fp) {
   ret.flags = (ID3_Flags) buffer[5];
 
   // Size of the ID3 frame
-  ret.size = *(unsigned int *) (&buffer[6]);
+  ret.size = (buffer[6] << 24) | (buffer[7] << 16) | (buffer[8] << 8) | buffer[9];
 
   fseek(fp, (long) (ftell(fp) + ret.size), SEEK_SET);
   return ret;
